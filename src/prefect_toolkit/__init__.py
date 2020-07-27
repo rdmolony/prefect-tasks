@@ -1,1 +1,1 @@
-from prefect_toolkit.run_flow import run_flow
+from prefect_toolkit.flow import run_flow
