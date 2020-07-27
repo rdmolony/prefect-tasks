@@ -41,7 +41,7 @@ def run_flow(
     flow = flow_function()
     tasks = flow.get_tasks()
 
-    flow_runner = prefect.engine.flow_runner.FlowRunner()
+    flow_runner = prefect.engine.flow_runner.FlowRunner(flow)
 
     if parallel:
         executor = DaskExecutor()
