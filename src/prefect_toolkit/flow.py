@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Tuple, Union, Any, Dict
 
 import prefect
 from prefect import Flow
@@ -13,6 +13,7 @@ def run_flow(
     flow_function: Callable[[None], Flow],
     viz_path: Path = None,
     parallel: bool = False,
+    parameters: Dict[str, Any] = None,
 ) -> Tuple[State, List[Task]]:
     """Runs all preprocessing prefect tasks and returns the flow state &
     a list of all tasks run
@@ -41,15 +42,13 @@ def run_flow(
     flow = flow_function()
     tasks = flow.get_tasks()
 
-    flow_runner = prefect.engine.flow_runner.FlowRunner(flow)
-
     if parallel:
         executor = DaskExecutor()
     else:
         executor = LocalExecutor()
 
     with raise_on_exception():
-        state = flow_runner.run(executor=executor)
+        state = flow.run(executor=executor, parameters=parameters)
 
     if viz_path:
         flow.visualize(flow_state=state, filename=viz_path)
